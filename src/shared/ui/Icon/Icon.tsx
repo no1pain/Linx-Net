@@ -1,4 +1,5 @@
 import React from "react";
+import sprite from "@assets/sprite.svg";
 
 interface IconProps extends React.SVGProps<SVGSVGElement> {
   id: string;
@@ -20,7 +21,7 @@ export const Icon: React.FC<IconProps> = ({
       className={className}
       {...props}
     >
-      <use href={`/sprite.svg#${id}`} />
+      <use href={`${sprite}#${id}`} />
     </svg>
   );
 };
