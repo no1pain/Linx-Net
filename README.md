@@ -75,7 +75,7 @@ src/
    yarn dev
    ```
 
-4. Open your browser and navigate to `http://localhost:3000` (or the port shown in your terminal)
+4. Open your browser and navigate to `http://localhost:3000`
 
 ## Build
 
