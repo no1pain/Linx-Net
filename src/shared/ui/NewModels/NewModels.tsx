@@ -5,22 +5,27 @@ import { Typography } from "@ui/Typography";
 import iphonesData from "@shared/data/iphones.json";
 
 export const NewModels: React.FC = () => {
-  // Limit to 8 phones as requested
   const phones = iphonesData.slice(0, 8);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const [cardWidth, setCardWidth] = useState(0);
-  const cardsToShow = 4; // Always show 4 cards at a time
+  const cardsToShow = 4;
 
-  // Calculate card width when component mounts or window resizes
   useEffect(() => {
     const calculateCardWidth = () => {
       if (containerRef.current) {
         const containerWidth =
           containerRef.current.getBoundingClientRect().width;
-        // Each card takes 1/4 of the container width (minus gaps)
-        setCardWidth((containerWidth - 16 * (cardsToShow - 1)) / cardsToShow);
+
+        let divisor = cardsToShow;
+        if (window.innerWidth >= 640 && window.innerWidth < 1280) {
+          divisor = 2;
+        } else if (window.innerWidth < 640) {
+          divisor = 1;
+        }
+
+        setCardWidth((containerWidth - 16 * (divisor - 1)) / divisor);
       }
     };
 
@@ -38,18 +43,30 @@ export const NewModels: React.FC = () => {
     setIsAnimating(true);
     setCurrentIndex((prev) => prev - 1);
 
-    // Reset animation state after transition completes
     setTimeout(() => setIsAnimating(false), 300);
   };
 
   const handleNext = () => {
-    if (isAnimating || currentIndex >= phones.length - cardsToShow) return;
+    let maxDisplayableCards = cardsToShow;
+    if (window.innerWidth >= 640 && window.innerWidth < 1280) {
+      maxDisplayableCards = 2;
+    } else if (window.innerWidth < 640) {
+      maxDisplayableCards = 1;
+    }
+
+    if (isAnimating || currentIndex >= phones.length - maxDisplayableCards)
+      return;
 
     setIsAnimating(true);
     setCurrentIndex((prev) => prev + 1);
 
-    // Reset animation state after transition completes
     setTimeout(() => setIsAnimating(false), 300);
+  };
+
+  const getCardsPerView = () => {
+    if (window.innerWidth >= 1280) return 4;
+    if (window.innerWidth >= 640) return 2;
+    return 1;
   };
 
   return (
@@ -72,7 +89,7 @@ export const NewModels: React.FC = () => {
             className="w-8 h-8 border border-gray-300 flex items-center justify-center"
             aria-label="Next models"
             disabled={
-              currentIndex >= phones.length - cardsToShow || isAnimating
+              currentIndex >= phones.length - getCardsPerView() || isAnimating
             }
           >
             <Icon id="arrow-right" size={16} />
@@ -84,7 +101,7 @@ export const NewModels: React.FC = () => {
         <div
           className="flex flex-nowrap gap-4 transition-transform duration-300 ease-in-out"
           style={{
-            transform: `translateX(-${currentIndex * (cardWidth + 16)}px)`, // Adding 16px for the gap
+            transform: `translateX(-${currentIndex * (cardWidth + 16)}px)`,
           }}
         >
           {phones.map((phone) => (
