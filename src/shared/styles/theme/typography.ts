@@ -1,4 +1,5 @@
 export const typography = {
+  // Desktop/Tablet typography
   h1: {
     fontSize: "48px",
     lineHeight: "56px",
@@ -31,7 +32,7 @@ export const typography = {
     textTransform: "uppercase" as const,
   },
   button: {
-    fontSize: "14px",
+    fontSize: "16px",
     lineHeight: "21px",
     letterSpacing: "0",
     fontWeight: "600",
@@ -43,8 +44,33 @@ export const typography = {
     fontWeight: "400",
   },
   small: {
-    fontSize: "12px",
+    fontSize: "11px",
     lineHeight: "15px",
+    letterSpacing: "0",
+    fontWeight: "600",
+  },
+
+  h1Mobile: {
+    fontSize: "32px",
+    lineHeight: "41px",
+    letterSpacing: "-0.01em",
+    fontWeight: "700",
+  },
+  h2Mobile: {
+    fontSize: "22px",
+    lineHeight: "31px",
+    letterSpacing: "-0.01em",
+    fontWeight: "700",
+  },
+  h3Mobile: {
+    fontSize: "20px",
+    lineHeight: "26px",
+    letterSpacing: "0",
+    fontWeight: "600",
+  },
+  h4Mobile: {
+    fontSize: "16px",
+    lineHeight: "21px",
     letterSpacing: "0",
     fontWeight: "600",
   },

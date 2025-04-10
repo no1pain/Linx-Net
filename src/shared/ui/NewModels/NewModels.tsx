@@ -12,11 +12,15 @@ export const NewModels: React.FC = () => {
   const [cardWidth, setCardWidth] = useState(0);
   const cardsToShow = 4;
 
+  const [isMobile, setIsMobile] = useState(false);
+
   useEffect(() => {
     const calculateCardWidth = () => {
       if (containerRef.current) {
         const containerWidth =
           containerRef.current.getBoundingClientRect().width;
+
+        setIsMobile(window.innerWidth < 640);
 
         let divisor = cardsToShow;
         if (window.innerWidth >= 640 && window.innerWidth < 1280) {
@@ -72,7 +76,7 @@ export const NewModels: React.FC = () => {
   return (
     <section className="py-8">
       <div className="flex justify-between items-center mb-6">
-        <Typography variant="h2" as="h2">
+        <Typography variant={isMobile ? "h2Mobile" : "h2"} as="h2">
           Brand new models
         </Typography>
         <div className="flex gap-2">

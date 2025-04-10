@@ -1,5 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { Icon } from "@ui/Icon";
+import {
+  SlideDirection,
+  handleNext as nextSlide,
+  handlePrevious as previousSlide,
+  getAnimationStyle,
+} from "./carouselUtils";
 
 interface CarouselProps {
   heading?: string;
@@ -17,18 +23,33 @@ export const Carousel: React.FC<CarouselProps> = ({
   ],
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [direction, setDirection] = useState<SlideDirection>("left");
 
-  const handlePrevious = () => {
-    setCurrentIndex((prevIndex) =>
-      prevIndex === 0 ? images.length - 1 : prevIndex - 1
+  // Memoize handler functions to prevent unnecessary re-renders
+  const handlePrevious = useCallback(() => {
+    previousSlide(
+      currentIndex,
+      images.length,
+      setCurrentIndex,
+      setDirection,
+      setIsAnimating,
+      isAnimating
     );
-  };
+  }, [currentIndex, images.length, isAnimating]);
 
-  const handleNext = () => {
-    setCurrentIndex((prevIndex) =>
-      prevIndex === images.length - 1 ? 0 : prevIndex + 1
+  const handleNext = useCallback(() => {
+    nextSlide(
+      currentIndex,
+      images.length,
+      setCurrentIndex,
+      setDirection,
+      setIsAnimating,
+      isAnimating
     );
-  };
+  }, [currentIndex, images.length, isAnimating]);
+
+  const animationStyles = getAnimationStyle(isAnimating, direction);
 
   return (
     <div>
@@ -49,18 +70,20 @@ export const Carousel: React.FC<CarouselProps> = ({
           </div>
         </div>
 
-        <div className="flex-1 flex justify-center items-center sm:px-0 ">
-          <img
-            src={images[currentIndex]}
-            alt={`Carousel ${currentIndex + 1}`}
-            className="hidden sm:block max-w-full max-h-full object-contain"
-          />
+        <div className="flex-1 flex justify-center items-center sm:px-0 overflow-hidden">
+          <div style={animationStyles}>
+            <img
+              src={images[currentIndex]}
+              alt={`Carousel ${currentIndex + 1}`}
+              className="hidden sm:block max-w-full max-h-full object-contain"
+            />
 
-          <img
-            src={mobileImages[currentIndex]}
-            alt={`Carousel Mobile ${currentIndex + 1}`}
-            className="block sm:hidden w-full h-auto"
-          />
+            <img
+              src={mobileImages[currentIndex]}
+              alt={`Carousel Mobile ${currentIndex + 1}`}
+              className="block sm:hidden w-full h-auto"
+            />
+          </div>
         </div>
 
         <div className="hidden sm:flex items-center ml-4">
