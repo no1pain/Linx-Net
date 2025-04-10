@@ -1,19 +1,29 @@
-import React from "react";
-
-export interface CarouselSlide {
-  id: number;
-  title: string;
-  subtitle: string;
-  buttonText: string;
-  image: string;
-}
+import React, { useState } from "react";
+import { Icon } from "@ui/Icon";
 
 interface CarouselProps {
-  slides: CarouselSlide[];
   heading?: string;
+  images?: string[];
 }
 
-export const Carousel: React.FC<CarouselProps> = ({ heading }) => {
+export const Carousel: React.FC<CarouselProps> = ({
+  heading,
+  images = ["/images/Carousel1", "/images/Carousel2", "/images/Carousel3"],
+}) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const handlePrevious = () => {
+    setCurrentIndex((prevIndex) =>
+      prevIndex === 0 ? images.length - 1 : prevIndex - 1
+    );
+  };
+
+  const handleNext = () => {
+    setCurrentIndex((prevIndex) =>
+      prevIndex === images.length - 1 ? 0 : prevIndex + 1
+    );
+  };
+
   return (
     <div>
       {heading && (
@@ -22,31 +32,31 @@ export const Carousel: React.FC<CarouselProps> = ({ heading }) => {
         </div>
       )}
 
-      <div className="flex w-full">
-        <div className="bg-[#0F0F11] w-12 h-[580px] flex items-center justify-center cursor-pointer">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path
-              d="M10 12L6 8L10 4"
-              stroke="white"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+      <div className="w-full flex">
+        <div className="flex items-center mr-4">
+          <div
+            onClick={handlePrevious}
+            className="w-[32px] h-[32px] flex items-center justify-center cursor-pointer border border-gray-300"
+          >
+            <Icon id="arrow-left" size={16} />
+          </div>
         </div>
 
-        <div className="flex-1 bg-blue-500 h-[580px]"></div>
+        <div className="flex-1 flex justify-center items-center">
+          <img
+            src={images[currentIndex]}
+            alt={`Carousel ${currentIndex + 1}`}
+            className="max-w-full max-h-full object-contain"
+          />
+        </div>
 
-        <div className="bg-[#0F0F11] w-12 h-[580px] flex items-center justify-center cursor-pointer">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path
-              d="M6 12L10 8L6 4"
-              stroke="white"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+        <div className="flex items-center ml-4">
+          <div
+            onClick={handleNext}
+            className="w-[32px] h-[32px] flex items-center justify-center cursor-pointer border border-gray-300"
+          >
+            <Icon id="arrow-right" size={16} />
+          </div>
         </div>
       </div>
     </div>
