@@ -14,7 +14,7 @@ interface CarouselOptions {
 interface CarouselState {
   currentIndex: number;
   isAnimating: boolean;
-  containerRef: MutableRefObject<HTMLDivElement | null | undefined>;
+  containerRef: MutableRefObject<HTMLDivElement | null>;
   itemWidth: number;
   handlePrevious: () => void;
   handleNext: () => void;
