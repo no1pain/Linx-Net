@@ -1,25 +1,55 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { ProductCard } from "@ui/ProductCard";
 import { Icon } from "@ui/Icon";
 import { Typography } from "@ui/Typography";
 import iphonesData from "@shared/data/iphones.json";
 
 export const NewModels: React.FC = () => {
-  const [currentPage, setCurrentPage] = useState(0);
-  const phonesPerPage = 4;
-  const totalPages = Math.ceil(iphonesData.length / phonesPerPage);
+  // Limit to 8 phones as requested
+  const phones = iphonesData.slice(0, 8);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [cardWidth, setCardWidth] = useState(0);
+  const cardsToShow = 4; // Always show 4 cards at a time
 
-  const currentPhones = iphonesData.slice(
-    currentPage * phonesPerPage,
-    (currentPage + 1) * phonesPerPage
-  );
+  // Calculate card width when component mounts or window resizes
+  useEffect(() => {
+    const calculateCardWidth = () => {
+      if (containerRef.current) {
+        const containerWidth =
+          containerRef.current.getBoundingClientRect().width;
+        // Each card takes 1/4 of the container width (minus gaps)
+        setCardWidth((containerWidth - 16 * (cardsToShow - 1)) / cardsToShow);
+      }
+    };
+
+    calculateCardWidth();
+    window.addEventListener("resize", calculateCardWidth);
+
+    return () => {
+      window.removeEventListener("resize", calculateCardWidth);
+    };
+  }, []);
 
   const handlePrevious = () => {
-    setCurrentPage((prev) => (prev > 0 ? prev - 1 : totalPages - 1));
+    if (isAnimating || currentIndex === 0) return;
+
+    setIsAnimating(true);
+    setCurrentIndex((prev) => prev - 1);
+
+    // Reset animation state after transition completes
+    setTimeout(() => setIsAnimating(false), 300);
   };
 
   const handleNext = () => {
-    setCurrentPage((prev) => (prev < totalPages - 1 ? prev + 1 : 0));
+    if (isAnimating || currentIndex >= phones.length - cardsToShow) return;
+
+    setIsAnimating(true);
+    setCurrentIndex((prev) => prev + 1);
+
+    // Reset animation state after transition completes
+    setTimeout(() => setIsAnimating(false), 300);
   };
 
   return (
@@ -33,6 +63,7 @@ export const NewModels: React.FC = () => {
             onClick={handlePrevious}
             className="w-8 h-8 border border-gray-300 flex items-center justify-center"
             aria-label="Previous models"
+            disabled={currentIndex === 0 || isAnimating}
           >
             <Icon id="arrow-left" size={16} />
           </button>
@@ -40,27 +71,45 @@ export const NewModels: React.FC = () => {
             onClick={handleNext}
             className="w-8 h-8 border border-gray-300 flex items-center justify-center"
             aria-label="Next models"
+            disabled={
+              currentIndex >= phones.length - cardsToShow || isAnimating
+            }
           >
             <Icon id="arrow-right" size={16} />
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {currentPhones.map((phone) => (
-          <ProductCard
-            key={phone.id}
-            title={phone.title}
-            subtitle={phone.subtitle}
-            price={phone.price}
-            image={phone.image}
-            specs={phone.specs}
-            onAddToCart={() => console.log(`Add to cart: ${phone.title}`)}
-            onAddToFavorites={() =>
-              console.log(`Add to favorites: ${phone.title}`)
-            }
-          />
-        ))}
+      <div className="relative overflow-hidden" ref={containerRef}>
+        <div
+          className="flex flex-nowrap gap-4 transition-transform duration-300 ease-in-out"
+          style={{
+            transform: `translateX(-${currentIndex * (cardWidth + 16)}px)`, // Adding 16px for the gap
+          }}
+        >
+          {phones.map((phone) => (
+            <div
+              key={phone.id}
+              className="flex-shrink-0"
+              style={{
+                width: `${cardWidth}px`,
+                maxWidth: "300px",
+              }}
+            >
+              <ProductCard
+                title={phone.title}
+                subtitle={phone.subtitle}
+                price={phone.price}
+                image={phone.image}
+                specs={phone.specs}
+                onAddToCart={() => console.log(`Add to cart: ${phone.title}`)}
+                onAddToFavorites={() =>
+                  console.log(`Add to favorites: ${phone.title}`)
+                }
+              />
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

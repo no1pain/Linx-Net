@@ -14,7 +14,7 @@ export const Container: React.FC<ContainerProps> = ({
   return (
     <div
       className={`
-      mx-auto
+      mx-auto overflow-hidden
       w-full max-w-[639px]
       sm:max-w-[1199px]
       xl:max-w-[1200px]
