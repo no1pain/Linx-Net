@@ -7,6 +7,8 @@ interface CarouselOptions {
   tabletItems?: number;
   mobileItems?: number;
   gap?: number;
+  desktopBreakpoint?: number;
+  tabletBreakpoint?: number;
 }
 
 interface CarouselState {
@@ -19,6 +21,7 @@ interface CarouselState {
   getItemsPerView: () => number;
   hasNext: boolean;
   hasPrevious: boolean;
+  isMobile: boolean;
 }
 
 export const useCarousel = ({
@@ -27,16 +30,18 @@ export const useCarousel = ({
   tabletItems = 2,
   mobileItems = 1,
   gap = 16,
+  desktopBreakpoint = 1280,
+  tabletBreakpoint = 640,
 }: CarouselOptions): CarouselState => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [itemWidth, setItemWidth] = useState(0);
-  const { isTablet, isDesktop } = useResponsive();
+  const [isMobile, setIsMobile] = useState(false);
 
   const getItemsPerView = (): number => {
-    if (isDesktop) return desktopItems;
-    if (isTablet) return tabletItems;
+    if (window.innerWidth >= desktopBreakpoint) return desktopItems;
+    if (window.innerWidth >= tabletBreakpoint) return tabletItems;
     return mobileItems;
   };
 
@@ -45,10 +50,20 @@ export const useCarousel = ({
       if (containerRef.current) {
         const containerWidth =
           containerRef.current.getBoundingClientRect().width;
-        const itemsPerView = getItemsPerView();
-        setItemWidth(
-          (containerWidth - gap * (itemsPerView - 1)) / itemsPerView
-        );
+
+        setIsMobile(window.innerWidth < tabletBreakpoint);
+
+        let divisor = desktopItems; // Desktop default
+        if (
+          window.innerWidth >= tabletBreakpoint &&
+          window.innerWidth < desktopBreakpoint
+        ) {
+          divisor = tabletItems; // Tablet
+        } else if (window.innerWidth < tabletBreakpoint) {
+          divisor = mobileItems; // Mobile
+        }
+
+        setItemWidth((containerWidth - gap * (divisor - 1)) / divisor);
       }
     };
 
@@ -58,7 +73,14 @@ export const useCarousel = ({
     return () => {
       window.removeEventListener("resize", calculateItemWidth);
     };
-  }, [gap]);
+  }, [
+    gap,
+    desktopItems,
+    tabletItems,
+    mobileItems,
+    desktopBreakpoint,
+    tabletBreakpoint,
+  ]);
 
   const handlePrevious = () => {
     if (isAnimating || currentIndex === 0) return;
@@ -70,9 +92,17 @@ export const useCarousel = ({
   };
 
   const handleNext = () => {
-    const itemsPerView = getItemsPerView();
+    let maxDisplayableItems = desktopItems;
+    if (
+      window.innerWidth >= tabletBreakpoint &&
+      window.innerWidth < desktopBreakpoint
+    ) {
+      maxDisplayableItems = tabletItems;
+    } else if (window.innerWidth < tabletBreakpoint) {
+      maxDisplayableItems = mobileItems;
+    }
 
-    if (isAnimating || currentIndex >= itemCount - itemsPerView) return;
+    if (isAnimating || currentIndex >= itemCount - maxDisplayableItems) return;
 
     setIsAnimating(true);
     setCurrentIndex((prev) => prev + 1);
@@ -93,5 +123,6 @@ export const useCarousel = ({
     getItemsPerView,
     hasNext,
     hasPrevious,
+    isMobile,
   };
 };

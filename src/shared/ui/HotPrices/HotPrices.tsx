@@ -3,12 +3,10 @@ import { Icon } from "@ui/Icon";
 import { Typography } from "@ui/Typography";
 import iphonesData from "@shared/data/iphones.json";
 import { HotPricePhone } from "@shared/data/hotprices";
-import { useResponsive } from "@shared/hooks/useResponsive";
 import { useCarousel } from "@shared/hooks/useCarousel";
 
 export const HotPrices: React.FC = () => {
   const phones = iphonesData.slice(0, 8) as HotPricePhone[];
-  const { isMobile } = useResponsive();
 
   const {
     currentIndex,
@@ -17,15 +15,17 @@ export const HotPrices: React.FC = () => {
     itemWidth,
     handlePrevious,
     handleNext,
-    getItemsPerView,
     hasNext,
     hasPrevious,
+    isMobile,
   } = useCarousel({
     itemCount: phones.length,
     desktopItems: 4,
     tabletItems: 2,
     mobileItems: 1,
     gap: 16,
+    desktopBreakpoint: 1280,
+    tabletBreakpoint: 640,
   });
 
   const HotPriceCard = ({ phone }: { phone: HotPricePhone }) => {
