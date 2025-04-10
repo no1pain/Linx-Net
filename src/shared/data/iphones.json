@@ -1,0 +1,210 @@
+[
+  {
+    "id": 1,
+    "title": "Apple iPhone X 64GB Silver",
+    "subtitle": "(MT952RU/A)",
+    "price": 799,
+    "oldPrice": 899,
+    "image": "/images/IphoneXSilver.png",
+    "specs": {
+      "Screen": "5.8\" OLED",
+      "Capacity": "64 GB",
+      "RAM": "3 GB"
+    }
+  },
+  {
+    "id": 2,
+    "title": "Apple iPhone 11 Pro Max 64GB",
+    "subtitle": "Gold (MTGW2RU/A)",
+    "price": 799,
+    "oldPrice": 999,
+    "image": "/images/Iphone11ProMaxGold.png",
+    "specs": {
+      "Screen": "6.5\" OLED",
+      "Capacity": "64 GB",
+      "RAM": "4 GB"
+    }
+  },
+  {
+    "id": 3,
+    "title": "Apple iPhone 11 128GB Purple",
+    "subtitle": "(MWM32RU/A)",
+    "price": 799,
+    "oldPrice": 899,
+    "image": "/images/Iphone11Purple.png",
+    "specs": {
+      "Screen": "6.1\" IPS",
+      "Capacity": "128 GB",
+      "RAM": "4 GB"
+    }
+  },
+  {
+    "id": 4,
+    "title": "Apple iPhone 14 Pro 128GB Silver",
+    "subtitle": "(MTE52RU/A)",
+    "price": 859,
+    "oldPrice": 999,
+    "image": "/images/Iphone14ProSilver.png",
+    "specs": {
+      "Screen": "6.1\" OLED",
+      "Capacity": "128 GB",
+      "RAM": "6 GB"
+    }
+  },
+  {
+    "id": 5,
+    "title": "Apple iPhone XS 64GB Silver",
+    "subtitle": "(MT952RU/A)",
+    "price": 799,
+    "oldPrice": 899,
+    "image": "/images/IphoneXsSilver.png",
+    "specs": {
+      "Screen": "5.8\" OLED",
+      "Capacity": "64 GB",
+      "RAM": "4 GB"
+    }
+  },
+  {
+    "id": 6,
+    "title": "Apple iPhone 11 Pro Max 64GB",
+    "subtitle": "Midnight Green (MWHH2RU/A)",
+    "price": 799,
+    "oldPrice": 999,
+    "image": "/images/Iphone11ProMaxMidnightGreen.png",
+    "specs": {
+      "Screen": "6.5\" OLED",
+      "Capacity": "64 GB",
+      "RAM": "4 GB"
+    }
+  },
+  {
+    "id": 7,
+    "title": "Apple iPhone 14 Pro 128GB",
+    "subtitle": "Deep Purple (MQ0G3)",
+    "price": 899,
+    "oldPrice": 999,
+    "image": "/images/Iphone14ProPurple.png",
+    "specs": {
+      "Screen": "6.1\" OLED",
+      "Capacity": "128 GB",
+      "RAM": "6 GB"
+    }
+  },
+  {
+    "id": 8,
+    "title": "Apple iPhone 14 Pro 128GB",
+    "subtitle": "Gold (MQ083)",
+    "price": 859,
+    "oldPrice": 999,
+    "image": "/images/Iphone14ProGold.png",
+    "specs": {
+      "Screen": "6.1\" OLED",
+      "Capacity": "128 GB",
+      "RAM": "6 GB"
+    }
+  },
+  {
+    "id": 9,
+    "title": "Apple iPhone X 64GB Silver",
+    "subtitle": "(MT952RU/A)",
+    "price": 799,
+    "oldPrice": 899,
+    "image": "/images/IphoneXSilver.png",
+    "specs": {
+      "Screen": "5.8\" OLED",
+      "Capacity": "64 GB",
+      "RAM": "3 GB"
+    }
+  },
+  {
+    "id": 10,
+    "title": "Apple iPhone 14 Pro 128GB",
+    "subtitle": "PRODUCT Red (MQ513)",
+    "price": 899,
+    "oldPrice": 999,
+    "image": "/images/Iphone14ProRed.png",
+    "specs": {
+      "Screen": "6.1\" OLED",
+      "Capacity": "128 GB",
+      "RAM": "6 GB"
+    }
+  },
+  {
+    "id": 11,
+    "title": "Apple iPhone 11 128GB Purple",
+    "subtitle": "(MWM32RU/A)",
+    "price": 799,
+    "oldPrice": 899,
+    "image": "/images/Iphone11Purple.png",
+    "specs": {
+      "Screen": "6.1\" IPS",
+      "Capacity": "128 GB",
+      "RAM": "4 GB"
+    }
+  },
+  {
+    "id": 12,
+    "title": "Apple iPhone XS 64GB Silver",
+    "subtitle": "(MTE52RU/A)",
+    "price": 859,
+    "oldPrice": 999,
+    "image": "/images/IphoneXsSilver.png",
+    "specs": {
+      "Screen": "5.8\" OLED",
+      "Capacity": "64 GB",
+      "RAM": "4 GB"
+    }
+  },
+  {
+    "id": 13,
+    "title": "Apple iPhone X 64GB Silver",
+    "subtitle": "(MT952RU/A)",
+    "price": 799,
+    "oldPrice": 899,
+    "image": "/images/IphoneXSilver.png",
+    "specs": {
+      "Screen": "5.8\" OLED",
+      "Capacity": "64 GB",
+      "RAM": "3 GB"
+    }
+  },
+  {
+    "id": 14,
+    "title": "Apple iPhone 11 Pro Max 64GB",
+    "subtitle": "Gold (MTGW2RU/A)",
+    "price": 799,
+    "oldPrice": 999,
+    "image": "/images/Iphone11ProMaxGold.png",
+    "specs": {
+      "Screen": "6.5\" OLED",
+      "Capacity": "64 GB",
+      "RAM": "4 GB"
+    }
+  },
+  {
+    "id": 15,
+    "title": "Apple iPhone 14 Pro 128GB",
+    "subtitle": "Deep Purple (MQ0G3)",
+    "price": 899,
+    "oldPrice": 999,
+    "image": "/images/Iphone14ProPurple.png",
+    "specs": {
+      "Screen": "6.1\" OLED",
+      "Capacity": "128 GB",
+      "RAM": "6 GB"
+    }
+  },
+  {
+    "id": 16,
+    "title": "Apple iPhone 14 Pro 128GB",
+    "subtitle": "Gold (MQ083)",
+    "price": 859,
+    "oldPrice": 999,
+    "image": "/images/Iphone14ProGold.png",
+    "specs": {
+      "Screen": "6.1\" OLED",
+      "Capacity": "128 GB",
+      "RAM": "6 GB"
+    }
+  }
+]
