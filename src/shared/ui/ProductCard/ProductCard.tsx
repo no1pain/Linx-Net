@@ -5,6 +5,7 @@ interface ProductCardProps {
   title: string;
   subtitle: string;
   price: number;
+  oldPrice?: number;
   image: string;
   specs?: {
     [key: string]: string;
@@ -12,17 +13,20 @@ interface ProductCardProps {
   onAddToCart?: () => void;
   onAddToFavorites?: () => void;
   initialFavorite?: boolean;
+  isAddedToCart?: boolean;
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({
   title,
   subtitle,
   price,
+  oldPrice,
   image,
   specs = {},
   onAddToCart = () => {},
   onAddToFavorites = () => {},
   initialFavorite = false,
+  isAddedToCart = false,
 }) => {
   const [isFavorite, setIsFavorite] = useState(initialFavorite);
 
@@ -33,30 +37,41 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
   return (
     <div className="border border-gray-200 p-6 flex flex-col h-full">
-      <div className="flex justify-center mb-6">
-        <img src={image} alt={title} className="max-h-48 object-contain" />
+      <div className="flex justify-center mb-6 h-[200px]">
+        <img src={image} alt={title} className="h-full object-contain" />
       </div>
 
-      <h3 className="text-base font-medium">{title}</h3>
-      <p className="text-sm text-gray-500 mb-2">{subtitle}</p>
+      <div className="min-h-[60px] mb-2">
+        <h3 className="text-base font-medium line-clamp-2">{title}</h3>
+        <p className="text-sm text-gray-500 line-clamp-1">{subtitle}</p>
+      </div>
 
-      <p className="text-xl font-semibold mt-auto mb-4">${price}</p>
+      <div className="flex items-end gap-2 mb-2">
+        <p className="text-xl font-semibold">${price}</p>
+        {oldPrice && (
+          <p className="text-sm text-gray-500 line-through">${oldPrice}</p>
+        )}
+      </div>
 
       <div className="space-y-1 mb-4">
         {Object.entries(specs).map(([key, value]) => (
           <div key={key} className="flex justify-between text-sm">
             <span className="text-gray-500">{key}</span>
-            <span>{value}</span>
+            <span className="text-black font-medium">{value}</span>
           </div>
         ))}
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex gap-2 mt-auto">
         <button
           onClick={onAddToCart}
-          className="bg-[#313237] text-white py-2 px-4 flex-1 hover:bg-opacity-90 transition"
+          className={`py-2 px-4 flex-1 ${
+            isAddedToCart
+              ? "bg-white text-green-600 border border-gray-300"
+              : "bg-[#313237] text-white hover:bg-opacity-90"
+          } transition`}
         >
-          Add to cart
+          {isAddedToCart ? "Added to cart" : "Add to cart"}
         </button>
         <button
           onClick={handleToggleFavorite}
