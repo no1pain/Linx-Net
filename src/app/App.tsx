@@ -1,4 +1,5 @@
 import { Header } from "@widgets/Header";
+import { Footer } from "@widgets/Footer";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HomePage } from "@pages/Home";
 import { useEffect } from "react";
@@ -12,9 +13,9 @@ function App() {
 
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-gray-50 overflow-x-hidden">
+      <div className="min-h-screen bg-gray-50 overflow-x-hidden flex flex-col">
         <Header />
-        <main className="overflow-x-hidden">
+        <main className="overflow-x-hidden flex-grow">
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/phones" element={<div>Phones Page</div>} />
@@ -22,6 +23,7 @@ function App() {
             <Route path="/accessories" element={<div>Accessories Page</div>} />
           </Routes>
         </main>
+        <Footer />
       </div>
     </BrowserRouter>
   );

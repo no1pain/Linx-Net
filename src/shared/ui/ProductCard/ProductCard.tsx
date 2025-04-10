@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Icon } from "@ui/Icon";
 
 interface ProductCardProps {
@@ -11,6 +11,7 @@ interface ProductCardProps {
   };
   onAddToCart?: () => void;
   onAddToFavorites?: () => void;
+  initialFavorite?: boolean;
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({
@@ -21,7 +22,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   specs = {},
   onAddToCart = () => {},
   onAddToFavorites = () => {},
+  initialFavorite = false,
 }) => {
+  const [isFavorite, setIsFavorite] = useState(initialFavorite);
+
+  const handleToggleFavorite = () => {
+    setIsFavorite(!isFavorite);
+    onAddToFavorites();
+  };
+
   return (
     <div className="border border-gray-200 p-6 flex flex-col h-full">
       <div className="flex justify-center mb-6">
@@ -50,10 +59,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           Add to cart
         </button>
         <button
-          onClick={onAddToFavorites}
+          onClick={handleToggleFavorite}
           className="border border-gray-300 p-2 flex items-center justify-center"
+          aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
         >
-          <Icon id="heart" size={16} />
+          <Icon id={isFavorite ? "heart-active" : "heart"} size={16} />
         </button>
       </div>
     </div>
