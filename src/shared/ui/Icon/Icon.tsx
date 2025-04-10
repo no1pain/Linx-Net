@@ -14,6 +14,9 @@ export const Icon: React.FC<IconProps> = ({
   className = "",
   ...props
 }) => {
+  const spritePath =
+    process.env.NODE_ENV === "production" ? "/sprite.svg" : sprite;
+
   return (
     <svg
       width={width || size}
@@ -21,7 +24,7 @@ export const Icon: React.FC<IconProps> = ({
       className={className}
       {...props}
     >
-      <use href={`${sprite}#${id}`} />
+      <use href={`${spritePath}#${id}`} />
     </svg>
   );
 };
