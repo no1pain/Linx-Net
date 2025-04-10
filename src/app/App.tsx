@@ -1,13 +1,20 @@
 import { Header } from "@widgets/Header";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HomePage } from "@pages/Home";
+import { useEffect } from "react";
+import { applyGlobalStyles } from "@styles/global";
 
 function App() {
+  useEffect(() => {
+    const cleanup = applyGlobalStyles();
+    return cleanup;
+  }, []);
+
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 overflow-x-hidden">
         <Header />
-        <main>
+        <main className="overflow-x-hidden">
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/phones" element={<div>Phones Page</div>} />
