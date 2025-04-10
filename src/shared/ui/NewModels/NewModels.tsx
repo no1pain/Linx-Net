@@ -29,7 +29,8 @@ export const NewModels: React.FC = () => {
           divisor = 1;
         }
 
-        setCardWidth((containerWidth - 16 * (divisor - 1)) / divisor);
+        const calculatedWidth = (containerWidth - 16 * (divisor - 1)) / divisor;
+        setCardWidth(calculatedWidth);
       }
     };
 
@@ -68,10 +69,15 @@ export const NewModels: React.FC = () => {
   };
 
   const getCardsPerView = () => {
-    if (window.innerWidth >= 1280) return 4;
+    if (window.innerWidth >= 1280) return cardsToShow;
     if (window.innerWidth >= 640) return 2;
     return 1;
   };
+
+  const visiblePhones = phones.slice(
+    currentIndex,
+    currentIndex + getCardsPerView()
+  );
 
   return (
     <section className="py-8">
@@ -102,19 +108,13 @@ export const NewModels: React.FC = () => {
       </div>
 
       <div className="relative overflow-hidden" ref={containerRef}>
-        <div
-          className="flex flex-nowrap gap-4 transition-transform duration-300 ease-in-out"
-          style={{
-            transform: `translateX(-${currentIndex * (cardWidth + 16)}px)`,
-          }}
-        >
-          {phones.map((phone) => (
+        <div className="flex flex-nowrap gap-4">
+          {visiblePhones.map((phone) => (
             <div
               key={phone.id}
-              className="flex-shrink-0"
+              className="flex-shrink-0 flex-grow-0"
               style={{
                 width: `${cardWidth}px`,
-                maxWidth: "300px",
               }}
             >
               <ProductCard
