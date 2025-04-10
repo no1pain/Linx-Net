@@ -1,6 +1,5 @@
 import React from "react";
 import { Icon } from "@ui/Icon";
-import { Container } from "@ui/layout/Container";
 import { NavLink } from "react-router-dom";
 
 const getLinkClassName = ({ isActive }: { isActive: boolean }) => {

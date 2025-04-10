@@ -1,5 +1,6 @@
 import { Header } from "@widgets/Header";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HomePage } from "@pages/Home";
 
 function App() {
   return (
@@ -8,7 +9,7 @@ function App() {
         <Header />
         <main>
           <Routes>
-            <Route path="/" element={<div>Home Page</div>} />
+            <Route path="/" element={<HomePage />} />
             <Route path="/phones" element={<div>Phones Page</div>} />
             <Route path="/tablets" element={<div>Tablets Page</div>} />
             <Route path="/accessories" element={<div>Accessories Page</div>} />
