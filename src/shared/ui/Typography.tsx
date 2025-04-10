@@ -2,13 +2,14 @@ import React from "react";
 import { typography } from "../config/theme";
 
 type TypographyVariant = keyof typeof typography;
-type Element = "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "p" | "span";
+type Element = "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "p" | "span" | "a";
 
 interface TypographyProps {
   variant?: TypographyVariant;
   children: React.ReactNode;
   className?: string;
   as?: Element;
+  href?: string;
 }
 
 export const Typography: React.FC<TypographyProps> = ({
@@ -16,6 +17,7 @@ export const Typography: React.FC<TypographyProps> = ({
   children,
   className = "",
   as: Component = "p",
+  ...props
 }) => {
   const styles = typography[variant];
 
@@ -32,6 +34,7 @@ export const Typography: React.FC<TypographyProps> = ({
           ? { textTransform: "uppercase" as const }
           : {}),
       },
+      ...props,
     },
     children
   );
