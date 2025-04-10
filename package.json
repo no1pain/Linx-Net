@@ -28,7 +28,7 @@
     "prebuild": "npm run copy:sprites",
     "start": "craco start",
     "build": "craco build",
-    "vercel-build": "cp src/shared/assets/sprite.svg public/ && craco build",
+    "vercel-build": "cp src/shared/assets/sprite.svg public/ && craco build && cp public/sprite.svg build/",
     "test": "craco test",
     "eject": "react-scripts eject"
   },

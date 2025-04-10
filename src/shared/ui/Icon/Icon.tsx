@@ -15,7 +15,9 @@ export const Icon: React.FC<IconProps> = ({
   ...props
 }) => {
   const spritePath =
-    process.env.NODE_ENV === "production" ? "/sprite.svg" : sprite;
+    process.env.NODE_ENV === "production"
+      ? `${process.env.PUBLIC_URL || ""}/sprite.svg`
+      : sprite;
 
   return (
     <svg
