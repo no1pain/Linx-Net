@@ -4,6 +4,15 @@ import { Typography } from "@ui/Typography";
 import { Icon } from "@ui/Icon";
 import { useFavorites } from "@/shared/contexts/FavoritesContext";
 import { useCart } from "@/shared/contexts/CartContext";
+import { ProductBreadcrumbs } from "./components/ProductBreadcrumbs";
+import { ProductImages } from "./components/ProductImages";
+import { ProductColorSelector } from "./components/ProductColorSelector";
+import { ProductCapacitySelector } from "./components/ProductCapacitySelector";
+import { ProductPrice } from "./components/ProductPrice";
+import { ProductActions } from "./components/ProductActions";
+import { ProductSpecsPreview } from "./components/ProductSpecsPreview";
+import { ProductAbout } from "./components/ProductAbout";
+import { ProductTechSpecs } from "./components/ProductTechSpecs";
 
 interface ProductDetails {
   id: string | number;
@@ -198,19 +207,19 @@ export const ProductDetailsPage: React.FC = () => {
     );
   }
 
+  const getBreadcrumbPath = () => {
+    const category = getIdForCategory();
+    if (category === "apple" || category === "iphone") return "Phones";
+    if (category === "ipad") return "Tablets";
+    return "Accessories";
+  };
+
   const getIdForCategory = () => {
     const parts = String(productId).split("-") || [];
     if (parts.length > 0) {
       return parts[0];
     }
     return "";
-  };
-
-  const getBreadcrumbPath = () => {
-    const category = getIdForCategory();
-    if (category === "apple" || category === "iphone") return "Phones";
-    if (category === "ipad") return "Tablets";
-    return "Accessories";
   };
 
   const favorited = isFavorite(String(productId));
@@ -256,7 +265,6 @@ export const ProductDetailsPage: React.FC = () => {
     });
   };
 
-  // Derive available capacities and colors
   const capacities = product.capacityAvailable || [
     "64GB",
     "128GB",
@@ -272,23 +280,13 @@ export const ProductDetailsPage: React.FC = () => {
 
   return (
     <div className="container mx-auto py-8 px-4">
-      {/* Breadcrumb */}
-      <div className="flex items-center gap-2 mb-6 text-sm">
-        <Link to="/" className="text-gray-500 hover:text-black">
-          Home
-        </Link>
-        <span className="text-gray-500">&gt;</span>
-        <Link
-          to={`/${getBreadcrumbPath().toLowerCase()}`}
-          className="text-gray-500 hover:text-black"
-        >
-          {getBreadcrumbPath()}
-        </Link>
-        <span className="text-gray-500">&gt;</span>
-        <span className="text-black">{product.name}</span>
-      </div>
+      <ProductBreadcrumbs
+        homeLink="/"
+        categoryLink={`/${getBreadcrumbPath().toLowerCase()}`}
+        categoryName={getBreadcrumbPath()}
+        productName={product.name}
+      />
 
-      {/* Back button */}
       <button
         onClick={() => window.history.back()}
         className="flex items-center gap-2 text-gray-500 mb-4"
@@ -302,250 +300,60 @@ export const ProductDetailsPage: React.FC = () => {
       </Typography>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Product images */}
-        <div className="flex flex-col">
-          <div className="mb-6">
-            <img
-              src={
-                Array.isArray(product.images)
-                  ? getImagePath(product.images[selectedImageIndex])
-                  : getImagePath(product.images as unknown as string)
-              }
-              alt={product.name}
-              className="w-full object-contain max-h-[400px]"
-            />
-          </div>
-
-          <div className="flex gap-4 overflow-x-auto pb-2">
-            {Array.isArray(product.images) &&
-              product.images.map((image, index) => (
-                <button
-                  key={index}
-                  className={`border p-1 flex-shrink-0 w-[80px] h-[80px] ${
-                    selectedImageIndex === index
-                      ? "border-black"
-                      : "border-gray-200"
-                  }`}
-                  onClick={() => setSelectedImageIndex(index)}
-                >
-                  <img
-                    src={getImagePath(image)}
-                    alt={`${product.name} - Image ${index + 1}`}
-                    className="h-full w-full object-contain"
-                  />
-                </button>
-              ))}
-          </div>
+        <div className="flex flex-row gap-4">
+          <ProductImages
+            images={product.images}
+            productName={product.name}
+            selectedImageIndex={selectedImageIndex}
+            setSelectedImageIndex={setSelectedImageIndex}
+            getImagePath={getImagePath}
+          />
         </div>
 
-        {/* Product details and actions */}
         <div>
-          <div className="text-sm text-gray-500 mb-4">ID: {productId}</div>
-
-          {/* Colors */}
-          <div className="mb-6">
-            <div className="text-base font-medium mb-2">Available colors</div>
-            <div className="flex gap-3">
-              {colors.map((color) => (
-                <button
-                  key={color}
-                  className={`w-[32px] h-[32px] rounded-full ${
-                    selectedColor === color
-                      ? "ring-2 ring-black ring-offset-1"
-                      : ""
-                  }`}
-                  style={{
-                    backgroundColor:
-                      getColorClassName(color).replace("bg-", "") ===
-                      "bg-gray-200"
-                        ? "#e5e7eb"
-                        : getColorClassName(color).replace("bg-", ""),
-                  }}
-                  onClick={() => setSelectedColor(color)}
-                />
-              ))}
-            </div>
+          <div className="flex justify-between items-center mb-2">
+            <div className="text-base font-medium">Available colors</div>
+            <div className="text-sm text-gray-500">ID: {productId}</div>
           </div>
 
-          {/* Capacity options */}
-          <div className="mb-8">
-            <div className="text-base font-medium mb-2">Select capacity</div>
-            <div className="flex flex-wrap gap-2">
-              {capacities.map((capacity) => {
-                const formattedCapacity = capacity.replace(
-                  /([0-9]+)([A-Z]+)/,
-                  "$1 $2"
-                );
-                return (
-                  <button
-                    key={capacity}
-                    className={`py-1 px-3 border ${
-                      selectedCapacity === capacity ||
-                      (capacity.includes("GB") &&
-                        selectedCapacity === capacity.replace("GB", " GB"))
-                        ? "border-black bg-black text-white"
-                        : "border-gray-200 bg-white text-black"
-                    }`}
-                    onClick={() => setSelectedCapacity(capacity)}
-                  >
-                    {formattedCapacity}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+          <ProductColorSelector
+            colors={colors}
+            selectedColor={selectedColor}
+            setSelectedColor={setSelectedColor}
+            getColorClassName={getColorClassName}
+          />
 
-          {/* Price */}
-          <div className="mb-6 flex items-baseline gap-2">
-            <div className="text-3xl font-bold">${product.price}</div>
-            {product.priceRegular > product.price && (
-              <div className="text-lg text-gray-500 line-through">
-                ${product.priceRegular}
-              </div>
-            )}
-          </div>
+          <ProductCapacitySelector
+            capacities={capacities}
+            selectedCapacity={selectedCapacity}
+            setSelectedCapacity={setSelectedCapacity}
+          />
 
-          {/* Actions */}
-          <div className="flex gap-4 mb-8">
-            <button
-              onClick={handleAddToCart}
-              className={`py-3 w-[231px] sm:w-[180px] md:w-[263px] ${
-                inCart
-                  ? "bg-white text-green-600 border border-gray-300"
-                  : "bg-[#313237] text-white hover:bg-opacity-90"
-              } transition`}
-            >
-              {inCart ? "Added to cart" : "Add to cart"}
-            </button>
-            <button
-              onClick={handleToggleFavorite}
-              className="border border-gray-300 p-3 flex items-center justify-center w-[48px] h-[48px]"
-              aria-label={
-                favorited ? "Remove from favorites" : "Add to favorites"
-              }
-            >
-              <Icon id={favorited ? "heart-active" : "heart"} size={20} />
-            </button>
-          </div>
+          <ProductPrice
+            price={product.price}
+            priceRegular={product.priceRegular}
+          />
 
-          {/* Specs - shown directly below the buttons with width matching buttons */}
-          <div className="w-[287px] sm:w-[236px] md:w-[319px]">
-            <div className="grid grid-cols-2 gap-4 mb-2">
-              <div className="text-gray-500 font-mont text-[12px] leading-normal tracking-[0]">
-                Screen
-              </div>
-              <div className="font-mont font-semibold text-[12px] leading-normal tracking-[0] text-right">
-                {product.screen || "–"}
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4 mb-2">
-              <div className="text-gray-500 font-mont text-[12px] leading-normal tracking-[0]">
-                Resolution
-              </div>
-              <div className="font-mont font-semibold text-[12px] leading-normal tracking-[0] text-right">
-                {product.resolution || "–"}
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4 mb-2">
-              <div className="text-gray-500 font-mont text-[12px] leading-normal tracking-[0]">
-                Processor
-              </div>
-              <div className="font-mont font-semibold text-[12px] leading-normal tracking-[0] text-right">
-                {product.processor || "–"}
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="text-gray-500 font-mont text-[12px] leading-normal tracking-[0]">
-                RAM
-              </div>
-              <div className="font-mont font-semibold text-[12px] leading-normal tracking-[0] text-right">
-                {product.ram || "–"}
-              </div>
-            </div>
-          </div>
+          <ProductActions
+            inCart={inCart}
+            favorited={favorited}
+            handleAddToCart={handleAddToCart}
+            handleToggleFavorite={handleToggleFavorite}
+          />
+
+          {/* Specs section under buttons */}
+          <ProductSpecsPreview
+            screen={product.screen}
+            resolution={product.resolution}
+            processor={product.processor}
+            ram={product.ram}
+          />
         </div>
       </div>
 
-      {/* Tech specs and description */}
       <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-12">
-        <div>
-          <Typography variant="h2" as="h2" className="text-2xl font-bold mb-6">
-            About
-          </Typography>
-          <div className="text-base">{getProductDescription()}</div>
-        </div>
-
-        <div>
-          <Typography variant="h2" as="h2" className="text-2xl font-bold mb-6">
-            Tech specs
-          </Typography>
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4 py-2 border-b border-gray-200">
-              <div className="text-gray-500 font-mont text-[12px] leading-normal tracking-[0]">
-                Screen
-              </div>
-              <div className="font-mont font-semibold text-[12px] leading-normal tracking-[0] text-right">
-                {product.screen || "–"}
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4 py-2 border-b border-gray-200">
-              <div className="text-gray-500 font-mont text-[12px] leading-normal tracking-[0]">
-                Resolution
-              </div>
-              <div className="font-mont font-semibold text-[12px] leading-normal tracking-[0] text-right">
-                {product.resolution || "–"}
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4 py-2 border-b border-gray-200">
-              <div className="text-gray-500 font-mont text-[12px] leading-normal tracking-[0]">
-                Processor
-              </div>
-              <div className="font-mont font-semibold text-[12px] leading-normal tracking-[0] text-right">
-                {product.processor || "–"}
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4 py-2 border-b border-gray-200">
-              <div className="text-gray-500 font-mont text-[12px] leading-normal tracking-[0]">
-                RAM
-              </div>
-              <div className="font-mont font-semibold text-[12px] leading-normal tracking-[0] text-right">
-                {product.ram || "–"}
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4 py-2 border-b border-gray-200">
-              <div className="text-gray-500 font-mont text-[12px] leading-normal tracking-[0]">
-                Built in memory
-              </div>
-              <div className="font-mont font-semibold text-[12px] leading-normal tracking-[0] text-right">
-                {product.memory || product.capacity || "–"}
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4 py-2 border-b border-gray-200">
-              <div className="text-gray-500 font-mont text-[12px] leading-normal tracking-[0]">
-                Camera
-              </div>
-              <div className="font-mont font-semibold text-[12px] leading-normal tracking-[0] text-right">
-                {product.camera || "–"}
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4 py-2 border-b border-gray-200">
-              <div className="text-gray-500 font-mont text-[12px] leading-normal tracking-[0]">
-                Zoom
-              </div>
-              <div className="font-mont font-semibold text-[12px] leading-normal tracking-[0] text-right">
-                {product.zoom || "–"}
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4 py-2">
-              <div className="text-gray-500 font-mont text-[12px] leading-normal tracking-[0]">
-                Cell
-              </div>
-              <div className="font-mont font-semibold text-[12px] leading-normal tracking-[0] text-right">
-                {product.cell || "–"}
-              </div>
-            </div>
-          </div>
-        </div>
+        <ProductAbout description={getProductDescription()} />
+        <ProductTechSpecs product={product} />
       </div>
     </div>
   );
