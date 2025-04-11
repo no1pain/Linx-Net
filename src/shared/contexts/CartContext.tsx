@@ -21,9 +21,9 @@ export interface CartItem {
 interface CartContextType {
   cartItems: CartItem[];
   addToCart: (item: Omit<CartItem, "quantity">) => void;
-  removeFromCart: (id: string) => void;
-  updateQuantity: (id: string, quantity: number) => void;
-  isInCart: (id: string) => boolean;
+  removeFromCart: (id: string | number) => void;
+  updateQuantity: (id: string | number, quantity: number) => void;
+  isInCart: (id: string | number) => boolean;
   clearCart: () => void;
   cartCount: number;
   cartTotal: number;
@@ -54,34 +54,38 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
   }, [cartItems]);
 
   const addToCart = (item: Omit<CartItem, "quantity">) => {
-    const existingItem = cartItems.find((cartItem) => cartItem.id === item.id);
+    const itemId = String(item.id);
+    const existingItem = cartItems.find((cartItem) => cartItem.id === itemId);
 
     if (existingItem) {
       // If item already exists, increase quantity
-      updateQuantity(item.id, existingItem.quantity + 1);
+      updateQuantity(itemId, existingItem.quantity + 1);
     } else {
       // Otherwise add new item with quantity 1
-      setCartItems((prev) => [...prev, { ...item, quantity: 1 }]);
+      setCartItems((prev) => [...prev, { ...item, id: itemId, quantity: 1 }]);
     }
   };
 
-  const removeFromCart = (id: string) => {
-    setCartItems((prev) => prev.filter((item) => item.id !== id));
+  const removeFromCart = (id: string | number) => {
+    const stringId = String(id);
+    setCartItems((prev) => prev.filter((item) => item.id !== stringId));
   };
 
-  const updateQuantity = (id: string, quantity: number) => {
+  const updateQuantity = (id: string | number, quantity: number) => {
+    const stringId = String(id);
     if (quantity <= 0) {
-      removeFromCart(id);
+      removeFromCart(stringId);
       return;
     }
 
     setCartItems((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, quantity } : item))
+      prev.map((item) => (item.id === stringId ? { ...item, quantity } : item))
     );
   };
 
-  const isInCart = (id: string) => {
-    return cartItems.some((item) => item.id === id);
+  const isInCart = (id: string | number) => {
+    const stringId = String(id);
+    return cartItems.some((item) => item.id === stringId);
   };
 
   const clearCart = () => {

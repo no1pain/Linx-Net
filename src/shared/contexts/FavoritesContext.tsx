@@ -20,8 +20,8 @@ export interface FavoriteItem {
 interface FavoritesContextType {
   favorites: FavoriteItem[];
   addToFavorites: (item: FavoriteItem) => void;
-  removeFromFavorites: (id: string) => void;
-  isFavorite: (id: string) => boolean;
+  removeFromFavorites: (id: string | number) => void;
+  isFavorite: (id: string | number) => boolean;
   clearFavorites: () => void;
   favoritesCount: number;
 }
@@ -51,17 +51,20 @@ export const FavoritesProvider: React.FC<{ children: ReactNode }> = ({
   }, [favorites]);
 
   const addToFavorites = (item: FavoriteItem) => {
-    if (!isFavorite(item.id)) {
-      setFavorites((prev) => [...prev, item]);
+    const itemId = String(item.id);
+    if (!isFavorite(itemId)) {
+      setFavorites((prev) => [...prev, { ...item, id: itemId }]);
     }
   };
 
-  const removeFromFavorites = (id: string) => {
-    setFavorites((prev) => prev.filter((item) => item.id !== id));
+  const removeFromFavorites = (id: string | number) => {
+    const stringId = String(id);
+    setFavorites((prev) => prev.filter((item) => item.id !== stringId));
   };
 
-  const isFavorite = (id: string) => {
-    return favorites.some((item) => item.id === id);
+  const isFavorite = (id: string | number) => {
+    const stringId = String(id);
+    return favorites.some((item) => item.id === stringId);
   };
 
   const clearFavorites = () => {

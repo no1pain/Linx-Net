@@ -2,9 +2,10 @@ import React from "react";
 import { Icon } from "@ui/Icon";
 import { useFavorites } from "@/shared/contexts/FavoritesContext";
 import { useCart } from "@/shared/contexts/CartContext";
+import { Link } from "react-router-dom";
 
 interface ProductCardProps {
-  id: string;
+  id: string | number;
   title: string;
   subtitle: string;
   price: number;
@@ -31,15 +32,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   const { isFavorite, addToFavorites, removeFromFavorites } = useFavorites();
   const { isInCart, addToCart } = useCart();
 
-  const favorited = isFavorite(id);
-  const inCart = isInCart(id);
+  const favorited = isFavorite(String(id));
+  const inCart = isInCart(String(id));
 
   const handleToggleFavorite = () => {
     if (favorited) {
-      removeFromFavorites(id);
+      removeFromFavorites(String(id));
     } else {
       addToFavorites({
-        id,
+        id: String(id),
         title,
         subtitle,
         price,
@@ -47,13 +48,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         specs,
       });
     }
-    // Call the original onAddToFavorites callback if provided
     onAddToFavorites();
   };
 
   const handleAddToCart = () => {
     addToCart({
-      id,
+      id: String(id),
       title,
       subtitle,
       price,
@@ -61,13 +61,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       specs,
     });
 
-    // Call the original onAddToCart callback if provided
     onAddToCart();
   };
 
   const getImagePath = (imagePath: string) => {
+    if (!imagePath) return "";
     if (imagePath.startsWith("http")) return imagePath;
-    return `/${imagePath}`;
+    return imagePath.startsWith("/") ? imagePath : `/${imagePath}`;
   };
 
   const modelMatch = subtitle.match(/\((.*?)\)/);
@@ -78,16 +78,23 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
   return (
     <div className="border border-gray-200 p-6 flex flex-col h-full">
-      <div className="flex justify-center mb-6 h-[200px]">
+      <Link
+        to={`/product/${id}`}
+        className="flex justify-center mb-6 h-[200px]"
+      >
         <img
           src={getImagePath(image)}
           alt={title}
           className="h-full object-contain"
         />
-      </div>
+      </Link>
 
       <div className="min-h-[60px] mb-2">
-        <h3 className="text-base font-medium line-clamp-2">{title}</h3>
+        <Link to={`/product/${id}`}>
+          <h3 className="text-base font-medium line-clamp-2 hover:text-primary">
+            {title}
+          </h3>
+        </Link>
         {modelNumber ? (
           <p className="text-sm text-gray-500 line-clamp-1">({modelNumber})</p>
         ) : (

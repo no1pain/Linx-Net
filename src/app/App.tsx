@@ -7,6 +7,7 @@ import { TabletsPage } from "@pages/Tablets";
 import { AccessoriesPage } from "@pages/Accessories";
 import { FavoritesPage } from "@pages/Favorites";
 import { CartPage } from "@pages/Cart";
+import { ProductDetailsPage } from "@pages/ProductDetails/ProductDetailsPage";
 import { useEffect } from "react";
 import { applyGlobalStyles } from "@styles/global";
 import { FavoritesProvider } from "@/shared/contexts/FavoritesContext";
@@ -32,6 +33,10 @@ function App() {
                 <Route path="/accessories" element={<AccessoriesPage />} />
                 <Route path="/favorites" element={<FavoritesPage />} />
                 <Route path="/cart" element={<CartPage />} />
+                <Route
+                  path="/product/:productId"
+                  element={<ProductDetailsPage />}
+                />
               </Routes>
             </main>
             <Footer />
