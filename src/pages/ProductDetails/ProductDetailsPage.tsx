@@ -13,7 +13,7 @@ import { ProductActions } from "./components/ProductActions";
 import { ProductSpecsPreview } from "./components/ProductSpecsPreview";
 import { ProductAbout } from "./components/ProductAbout";
 import { ProductTechSpecs } from "./components/ProductTechSpecs";
-
+import { YouMayAlsoLike } from "@/shared/ui/YouMayAlsoLike";
 interface ProductDetails {
   id: string | number;
   name: string;
@@ -86,7 +86,6 @@ export const ProductDetailsPage: React.FC = () => {
           );
         }
 
-        // If still not found, try the products.json file
         if (!foundProduct) {
           response = await fetch("/api/products.json");
           if (!response.ok) {
@@ -99,7 +98,6 @@ export const ProductDetailsPage: React.FC = () => {
               String(p.itemId) === String(productId)
           );
 
-          // Convert the format to match the expected ProductDetails interface
           if (foundProduct) {
             foundProduct = {
               ...foundProduct,
@@ -114,7 +112,6 @@ export const ProductDetailsPage: React.FC = () => {
 
         if (foundProduct) {
           console.log("Found product:", foundProduct);
-          // Normalize product data structure
           const normalizedProduct = {
             ...foundProduct,
             price: foundProduct.price || foundProduct.priceDiscount,
@@ -148,15 +145,32 @@ export const ProductDetailsPage: React.FC = () => {
     if (!product?.description)
       return "No description available for this product.";
 
+    // If description is already an array of sections, pass it directly to the ProductAbout component
+    if (
+      Array.isArray(product.description) &&
+      product.description.length > 0 &&
+      typeof product.description[0] === "object" &&
+      "title" in product.description[0]
+    ) {
+      // Ensure text field is always an array as expected by ProductAbout
+      return product.description.map((section) => ({
+        title: section.title,
+        text: Array.isArray(section.text) ? section.text : [section.text],
+      }));
+    }
+
+    // If description is a string, return it as is
     if (typeof product.description === "string") {
       return product.description;
     }
 
+    // Handle the case where description might be an array of another structure
     if (Array.isArray(product.description)) {
       return product.description
         .map((item) => {
           if (typeof item === "object" && item.text) {
-            return item.text;
+            // Check if item.text is an array before calling join
+            return Array.isArray(item.text) ? item.text.join(" ") : item.text;
           }
           return "";
         })
@@ -355,6 +369,8 @@ export const ProductDetailsPage: React.FC = () => {
         <ProductAbout description={getProductDescription()} />
         <ProductTechSpecs product={product} />
       </div>
+
+      <YouMayAlsoLike />
     </div>
   );
 };
