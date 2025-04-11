@@ -58,7 +58,6 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
           </button>
         </div>
 
-        {/* Navigation */}
         <nav className="flex-grow px-16 py-4 flex flex-col gap-8">
           <div className="flex justify-center">
             <NavLink to="/" className={getLinkClassName} onClick={onClose}>
@@ -94,7 +93,6 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
           </div>
         </nav>
 
-        {/* Bottom Navigation */}
         <div className="h-[64px] border-t border-[#E2E6E9] grid grid-cols-2">
           <NavLink
             to="/favorites"
@@ -103,7 +101,7 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
             <Icon id="heart" className="w-4 h-4" />
           </NavLink>
           <NavLink to="/cart" className="flex items-center justify-center">
-            <Icon id="bag" className="w-4 h-4" />
+            <Icon id="cart" className="w-4 h-4" />
           </NavLink>
         </div>
       </div>
