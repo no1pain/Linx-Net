@@ -1,15 +1,66 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Icon } from "@ui/Icon";
 import { Typography } from "@ui/Typography";
-import iphonesData from "@shared/data/iphones.json";
-import { HotPricePhone } from "@shared/data/hotprices";
+import { useCart } from "@/shared/contexts/CartContext";
+import { useFavorites } from "@/shared/contexts/FavoritesContext";
+
+interface Phone {
+  id: string;
+  category: string;
+  namespaceId: string;
+  name: string;
+  capacityAvailable: string[];
+  capacity: string;
+  priceRegular: number;
+  priceDiscount: number;
+  colorsAvailable: string[];
+  color: string;
+  images: string[];
+  description: Array<{
+    title: string;
+    text: string[];
+  }>;
+  screen: string;
+  resolution: string;
+  processor: string;
+  ram: string;
+  camera: string;
+  zoom: string;
+  cell: string[];
+}
 
 export const HotPrices: React.FC = () => {
-  const phones = iphonesData.slice(0, 8) as HotPricePhone[];
+  const [phones, setPhones] = useState<Phone[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
+
+  const { addToCart, isInCart } = useCart();
+  const { addToFavorites, removeFromFavorites, isFavorite } = useFavorites();
+
+  useEffect(() => {
+    const fetchPhones = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch("/api/phones.json");
+        const data = await response.json();
+
+        const discountedPhones = data
+          .filter((phone: Phone) => phone.priceDiscount < phone.priceRegular)
+          .slice(0, 8);
+
+        setPhones(discountedPhones);
+      } catch (error) {
+        console.error("Error fetching hot prices phones:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPhones();
+  }, []);
 
   useEffect(() => {
     const handleResize = () => {
@@ -42,53 +93,130 @@ export const HotPrices: React.FC = () => {
     setTimeout(() => setIsAnimating(false), 300);
   };
 
-  const HotPriceCard = ({ phone }: { phone: HotPricePhone }) => {
+  const handleAddToCart = (phone: Phone) => {
+    addToCart({
+      id: phone.id,
+      title: phone.name,
+      subtitle: `${phone.capacity} ${phone.color}`,
+      price: phone.priceDiscount,
+      image: phone.images[0],
+      specs: {
+        Screen: phone.screen,
+        Resolution: phone.resolution,
+        Processor: phone.processor,
+        RAM: phone.ram,
+      },
+    });
+  };
+
+  const handleToggleFavorite = (phone: Phone) => {
+    if (isFavorite(phone.id)) {
+      removeFromFavorites(phone.id);
+    } else {
+      addToFavorites({
+        id: phone.id,
+        title: phone.name,
+        subtitle: `${phone.capacity} ${phone.color}`,
+        price: phone.priceDiscount,
+        image: phone.images[0],
+        specs: {
+          Screen: phone.screen,
+          Resolution: phone.resolution,
+          Processor: phone.processor,
+          RAM: phone.ram,
+        },
+      });
+    }
+  };
+
+  const getImagePath = (imagePath: string) => {
+    if (imagePath.startsWith("http")) return imagePath;
+    return `/${imagePath}`;
+  };
+
+  const HotPriceCard = ({ phone }: { phone: Phone }) => {
+    const inCart = isInCart(phone.id);
+    const isInFavorites = isFavorite(phone.id);
+
     return (
       <div className="border border-gray-200 p-6 flex flex-col h-full">
         <div className="flex justify-center mb-6">
           <img
-            src={phone.image}
-            alt={phone.title}
+            src={getImagePath(phone.images[0])}
+            alt={phone.name}
             className="max-h-48 object-contain"
           />
         </div>
 
-        <h3 className="text-base font-medium">{phone.title}</h3>
-        <p className="text-sm text-gray-500 mb-2">{phone.subtitle}</p>
+        <h3 className="text-base font-medium">{phone.name}</h3>
+        <p className="text-sm text-gray-500 mb-2">{`${phone.capacity} ${phone.color}`}</p>
 
         <div className="flex items-center gap-2 mt-auto mb-4">
-          <p className="text-xl font-semibold">${phone.price}</p>
+          <p className="text-xl font-semibold">${phone.priceDiscount}</p>
           <p className="text-sm text-gray-500 line-through">
-            ${phone.oldPrice}
+            ${phone.priceRegular}
           </p>
         </div>
 
         <div className="space-y-1 mb-4">
-          {Object.entries(phone.specs).map(([key, value]) => (
-            <div key={key} className="flex justify-between text-sm">
-              <span className="text-gray-500">{key}</span>
-              <span>{value}</span>
-            </div>
-          ))}
+          <div className="flex justify-between text-sm">
+            <span className="text-gray-500">Screen</span>
+            <span>{phone.screen}</span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-gray-500">Resolution</span>
+            <span>{phone.resolution}</span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-gray-500">Processor</span>
+            <span>{phone.processor}</span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-gray-500">RAM</span>
+            <span>{phone.ram}</span>
+          </div>
         </div>
 
         <div className="flex gap-2">
           <button
-            onClick={() => console.log(`Add to cart: ${phone.title}`)}
-            className="bg-[#313237] text-white py-2 px-4 flex-1 hover:bg-opacity-90 transition"
+            onClick={() => handleAddToCart(phone)}
+            className={`py-2 px-4 flex-1 transition ${
+              inCart
+                ? "bg-white text-green-600 border border-gray-300"
+                : "bg-[#313237] text-white hover:bg-opacity-90"
+            }`}
           >
-            Add to cart
+            {inCart ? "Added to cart" : "Add to cart"}
           </button>
           <button
-            onClick={() => console.log(`Add to favorites: ${phone.title}`)}
+            onClick={() => handleToggleFavorite(phone)}
             className="border border-gray-300 p-2 flex items-center justify-center"
+            aria-label={
+              isInFavorites ? "Remove from favorites" : "Add to favorites"
+            }
           >
-            <Icon id="heart" size={16} />
+            <Icon id={isInFavorites ? "heart-active" : "heart"} size={16} />
           </button>
         </div>
       </div>
     );
   };
+
+  if (isLoading) {
+    return (
+      <section className="py-8">
+        <div className="container mx-auto">
+          <div className="text-center py-16">
+            <p>Loading hot prices...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (phones.length === 0) {
+    return null;
+  }
 
   return (
     <section className="py-8">

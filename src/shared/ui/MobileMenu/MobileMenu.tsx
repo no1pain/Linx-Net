@@ -25,7 +25,7 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
       >
         <MobileMenuHeader onClose={onClose} />
         <MobileMenuNav onClose={onClose} />
-        <MobileMenuFooter />
+        <MobileMenuFooter onClose={onClose} />
       </div>
     </>
   );

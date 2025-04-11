@@ -6,19 +6,28 @@ import { NavLink } from "react-router-dom";
 interface CartBadgeProps {
   showCount?: boolean;
   className?: string;
+  onClick?: () => void;
 }
 
 export const CartBadge: React.FC<CartBadgeProps> = ({
   showCount = true,
   className = "",
+  onClick,
 }) => {
   const { cartCount } = useCart();
+
+  const handleClick = (e: React.MouseEvent) => {
+    if (onClick) {
+      onClick();
+    }
+  };
 
   return (
     <NavLink
       to="/cart"
       className={`relative flex items-center justify-center ${className}`}
       aria-label="Cart"
+      onClick={handleClick}
     >
       <Icon id="cart" className="w-4 h-4" />
 

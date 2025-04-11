@@ -6,19 +6,28 @@ import { NavLink } from "react-router-dom";
 interface FavoritesBadgeProps {
   showCount?: boolean;
   className?: string;
+  onClick?: () => void;
 }
 
 export const FavoritesBadge: React.FC<FavoritesBadgeProps> = ({
   showCount = true,
   className = "",
+  onClick,
 }) => {
   const { favoritesCount } = useFavorites();
+
+  const handleClick = (e: React.MouseEvent) => {
+    if (onClick) {
+      onClick();
+    }
+  };
 
   return (
     <NavLink
       to="/favorites"
       className={`relative flex items-center justify-center ${className}`}
       aria-label="Favorites"
+      onClick={handleClick}
     >
       <Icon id="heart" className="w-4 h-4" />
 

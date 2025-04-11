@@ -1,38 +1,43 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export function useLocalStorage<T>(
   key: string,
   initialValue: T
 ): [T, (value: T | ((prevValue: T) => T)) => void] {
-  const [storedValue, setStoredValue] = useState<T>(initialValue);
-
-  const [isInitialized, setIsInitialized] = useState(false);
-
-  useEffect(() => {
+  const [storedValue, setStoredValue] = useState<T>(() => {
     try {
       const item = localStorage.getItem(key);
-      if (item) {
-        setStoredValue(JSON.parse(item));
-      } else {
-        localStorage.setItem(key, JSON.stringify(initialValue));
-      }
+      return item ? JSON.parse(item) : initialValue;
     } catch (error) {
       console.error(`Error reading localStorage key "${key}":`, error);
-      localStorage.setItem(key, JSON.stringify(initialValue));
-    } finally {
-      setIsInitialized(true);
+      return initialValue;
+    }
+  });
+
+  const initializedRef = useRef(false);
+
+  useEffect(() => {
+    if (!initializedRef.current) {
+      try {
+        if (localStorage.getItem(key) === null) {
+          localStorage.setItem(key, JSON.stringify(initialValue));
+        }
+      } catch (error) {
+        console.error(`Error initializing localStorage key "${key}":`, error);
+      }
+      initializedRef.current = true;
     }
   }, [key, initialValue]);
 
   useEffect(() => {
-    if (isInitialized) {
+    if (initializedRef.current) {
       try {
         localStorage.setItem(key, JSON.stringify(storedValue));
       } catch (error) {
         console.error(`Error setting localStorage key "${key}":`, error);
       }
     }
-  }, [key, storedValue, isInitialized]);
+  }, [key, storedValue]);
 
   const setValue = (value: T | ((prevValue: T) => T)) => {
     try {
