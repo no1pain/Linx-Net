@@ -92,48 +92,49 @@ export const HotPrices: React.FC = () => {
 
   return (
     <section className="py-8">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="flex justify-between items-center mb-6">
-          <Typography variant={isMobile ? "h3" : "h2"} as="h2">
-            Hot prices
-          </Typography>
-          <div className="flex gap-2">
-            <button
-              onClick={handlePrevious}
-              className="w-8 h-8 border border-gray-300 flex items-center justify-center"
-              aria-label="Previous models"
-              disabled={currentIndex === 0 || isAnimating}
-            >
-              <Icon id="arrow-left" size={16} />
-            </button>
-            <button
-              onClick={handleNext}
-              className="w-8 h-8 border border-gray-300 flex items-center justify-center"
-              aria-label="Next models"
-              disabled={currentIndex >= phones.length - 3 || isAnimating}
-            >
-              <Icon id="arrow-right" size={16} />
-            </button>
+      <div className="container mx-auto">
+        <div className="grid grid-cols-4 sm:grid-cols-12">
+          <div className="col-span-4 sm:col-span-12 flex justify-between items-center mb-6">
+            <Typography variant={isMobile ? "h3" : "h2"} as="h2">
+              Hot prices
+            </Typography>
+            <div className="flex gap-2 items-center">
+              <button
+                onClick={handlePrevious}
+                className="w-8 h-8 border border-gray-300 flex items-center justify-center bg-white"
+                aria-label="Previous models"
+                disabled={currentIndex === 0 || isAnimating}
+              >
+                <Icon id="arrow-left" size={16} />
+              </button>
+              <button
+                onClick={handleNext}
+                className="w-8 h-8 border border-gray-300 flex items-center justify-center bg-white"
+                aria-label="Next models"
+                disabled={currentIndex >= phones.length - 3 || isAnimating}
+              >
+                <Icon id="arrow-right" size={16} />
+              </button>
+            </div>
           </div>
         </div>
 
-        <div className="overflow-hidden" ref={containerRef}>
-          <div
-            className="flex gap-4 transition-transform duration-300"
-            style={{
-              transform: `translateX(-${currentIndex * 296}px)`,
-              marginRight: "-100px", // Allow partial visibility of next card
-            }}
-          >
-            {phones.map((phone) => (
+        <div className="-mx-4">
+          <div className="px-4">
+            <div className="overflow-hidden" ref={containerRef}>
               <div
-                key={phone.id}
-                className="flex-shrink-0"
-                style={{ width: "280px" }}
+                className="flex gap-4 transition-transform duration-300"
+                style={{
+                  transform: `translateX(-${currentIndex * 288}px)`,
+                }}
               >
-                <HotPriceCard phone={phone} />
+                {phones.map((phone) => (
+                  <div key={phone.id} className="flex-shrink-0 w-[272px]">
+                    <HotPriceCard phone={phone} />
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </div>

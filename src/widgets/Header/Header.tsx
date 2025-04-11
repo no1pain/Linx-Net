@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { Icon } from "@ui/Icon";
 import { NavLink } from "react-router-dom";
+import { MobileMenu } from "@shared/ui/MobileMenu";
 
 const getLinkClassName = ({ isActive }: { isActive: boolean }) => {
   return `font-mont text-[12px] leading-[11px] tracking-[0.04em] font-[800] uppercase transition-colors ${
@@ -9,6 +10,8 @@ const getLinkClassName = ({ isActive }: { isActive: boolean }) => {
 };
 
 export const Header: React.FC = () => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   return (
     <header className="bg-white border-b border-elements">
       <div className="h-[48px] xl:h-[64px] flex items-center justify-between">
@@ -42,6 +45,7 @@ export const Header: React.FC = () => {
           <button
             className="sm:hidden w-[48px] xl:w-[64px] flex items-center justify-center text-primary hover:text-secondary transition-colors border-l border-elements"
             aria-label="Menu"
+            onClick={() => setIsMobileMenuOpen(true)}
           >
             <Icon id="burger" className="w-4 h-4" />
           </button>
@@ -59,6 +63,11 @@ export const Header: React.FC = () => {
           </button>
         </div>
       </div>
+
+      <MobileMenu
+        isOpen={isMobileMenuOpen}
+        onClose={() => setIsMobileMenuOpen(false)}
+      />
     </header>
   );
 };
