@@ -1,7 +1,7 @@
 import React from "react";
 import { ProductCard } from "@ui/ProductCard";
 import { Typography } from "@ui/Typography";
-import { useNewModels, Phone } from "@/shared/hooks/useNewModels";
+import { useNewModels } from "@/shared/hooks/useNewModels";
 import { NewModelsHeader } from "./NewModelsHeader";
 
 export const NewModels: React.FC = () => {

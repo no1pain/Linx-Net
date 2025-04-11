@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Icon } from "@ui/Icon";
-import { useFavorites, FavoriteItem } from "@/shared/contexts/FavoritesContext";
+import { useFavorites } from "@/shared/contexts/FavoritesContext";
 import { useCart } from "@/shared/contexts/CartContext";
 
 interface ProductCardProps {
