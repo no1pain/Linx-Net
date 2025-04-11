@@ -2,14 +2,64 @@ import React, { useState, useRef, useEffect } from "react";
 import { ProductCard } from "@ui/ProductCard";
 import { Icon } from "@ui/Icon";
 import { Typography } from "@ui/Typography";
-import iphonesData from "@shared/data/iphones.json";
+
+interface Phone {
+  id: string;
+  title: string;
+  subtitle: string;
+  model?: string;
+  price: number;
+  image: string;
+  specs: {
+    [key: string]: string;
+  };
+}
 
 export const NewModels: React.FC = () => {
-  const phones = iphonesData.slice(0, 8);
+  const [phones, setPhones] = useState<Phone[]>([]);
+  const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const fetchPhones = async () => {
+      try {
+        const response = await fetch("/api/phones.json");
+        if (!response.ok) {
+          throw new Error("Failed to fetch phones data");
+        }
+
+        const data = await response.json();
+
+        // Map the API data format to our component's format
+        const formattedPhones = data.slice(0, 8).map((phone: any) => ({
+          id: phone.id,
+          title: phone.name,
+          subtitle: `${phone.capacity} | ${phone.color}`,
+          model: phone.id.includes("-")
+            ? phone.id.split("-").pop()?.toUpperCase()
+            : null,
+          price: phone.priceRegular,
+          image: phone.images[0],
+          specs: {
+            Screen: phone.screen,
+            Capacity: phone.capacity,
+            RAM: phone.ram,
+          },
+        }));
+
+        setPhones(formattedPhones);
+      } catch (error) {
+        console.error("Error fetching phones:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPhones();
+  }, []);
 
   useEffect(() => {
     const handleResize = () => {
@@ -34,13 +84,31 @@ export const NewModels: React.FC = () => {
   };
 
   const handleNext = () => {
-    if (isAnimating || currentIndex >= phones.length - 3) return;
+    const maxVisibleItems = isMobile ? 1 : 4;
+    if (isAnimating || currentIndex >= phones.length - maxVisibleItems) return;
 
     setIsAnimating(true);
     setCurrentIndex((prev) => prev + 1);
 
     setTimeout(() => setIsAnimating(false), 300);
   };
+
+  if (loading) {
+    return (
+      <section className="py-8">
+        <div className="container mx-auto">
+          <Typography
+            variant={isMobile ? "h2Mobile" : "h2"}
+            as="h2"
+            className="mb-6"
+          >
+            Brand new models
+          </Typography>
+          <div className="text-center py-10">Loading new models...</div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-8">
@@ -63,7 +131,10 @@ export const NewModels: React.FC = () => {
                 onClick={handleNext}
                 className="w-8 h-8 border border-gray-300 flex items-center justify-center bg-white"
                 aria-label="Next models"
-                disabled={currentIndex >= phones.length - 3 || isAnimating}
+                disabled={
+                  currentIndex >= phones.length - (isMobile ? 1 : 4) ||
+                  isAnimating
+                }
               >
                 <Icon id="arrow-right" size={16} />
               </button>
@@ -77,14 +148,16 @@ export const NewModels: React.FC = () => {
               <div
                 className="flex gap-4 transition-transform duration-300"
                 style={{
-                  transform: `translateX(-${currentIndex * 288}px)`,
+                  transform: `translateX(-${currentIndex * (272 + 16)}px)`,
                 }}
               >
                 {phones.map((phone) => (
                   <div key={phone.id} className="flex-shrink-0 w-[272px]">
                     <ProductCard
                       title={phone.title}
-                      subtitle={phone.subtitle}
+                      subtitle={
+                        phone.model ? `(${phone.model})` : phone.subtitle
+                      }
                       price={phone.price}
                       image={phone.image}
                       specs={phone.specs}

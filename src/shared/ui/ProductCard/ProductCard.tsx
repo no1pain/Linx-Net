@@ -40,6 +40,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     return `/${imagePath}`;
   };
 
+  const modelMatch = subtitle.match(/\((.*?)\)/);
+  const modelNumber = modelMatch ? modelMatch[1] : null;
+  const displaySubtitle = modelMatch
+    ? subtitle.replace(/\((.*?)\)/, "").trim()
+    : subtitle;
+
   return (
     <div className="border border-gray-200 p-6 flex flex-col h-full">
       <div className="flex justify-center mb-6 h-[200px]">
@@ -52,10 +58,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
       <div className="min-h-[60px] mb-2">
         <h3 className="text-base font-medium line-clamp-2">{title}</h3>
-        <p className="text-sm text-gray-500 line-clamp-1">{subtitle}</p>
+        {modelNumber ? (
+          <p className="text-sm text-gray-500 line-clamp-1">({modelNumber})</p>
+        ) : (
+          <p className="text-sm text-gray-500 line-clamp-1">
+            {displaySubtitle}
+          </p>
+        )}
       </div>
 
-      <div className="flex items-end gap-2 mb-2">
+      <div className="mb-4">
         <p className="text-xl font-semibold">${price}</p>
         {oldPrice && oldPrice > price && (
           <p className="text-sm text-gray-500 line-through">${oldPrice}</p>
