@@ -1,7 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Icon } from "@ui/Icon";
+import { useFavorites, FavoriteItem } from "@/shared/contexts/FavoritesContext";
+import { useCart } from "@/shared/contexts/CartContext";
 
 interface ProductCardProps {
+  id: string;
   title: string;
   subtitle: string;
   price: number;
@@ -12,11 +15,10 @@ interface ProductCardProps {
   };
   onAddToCart?: () => void;
   onAddToFavorites?: () => void;
-  initialFavorite?: boolean;
-  isAddedToCart?: boolean;
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({
+  id,
   title,
   subtitle,
   price,
@@ -25,14 +27,42 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   specs = {},
   onAddToCart = () => {},
   onAddToFavorites = () => {},
-  initialFavorite = false,
-  isAddedToCart = false,
 }) => {
-  const [isFavorite, setIsFavorite] = useState(initialFavorite);
+  const { isFavorite, addToFavorites, removeFromFavorites } = useFavorites();
+  const { isInCart, addToCart } = useCart();
+
+  const favorited = isFavorite(id);
+  const inCart = isInCart(id);
 
   const handleToggleFavorite = () => {
-    setIsFavorite(!isFavorite);
+    if (favorited) {
+      removeFromFavorites(id);
+    } else {
+      addToFavorites({
+        id,
+        title,
+        subtitle,
+        price,
+        image,
+        specs,
+      });
+    }
+    // Call the original onAddToFavorites callback if provided
     onAddToFavorites();
+  };
+
+  const handleAddToCart = () => {
+    addToCart({
+      id,
+      title,
+      subtitle,
+      price,
+      image,
+      specs,
+    });
+
+    // Call the original onAddToCart callback if provided
+    onAddToCart();
   };
 
   const getImagePath = (imagePath: string) => {
@@ -85,21 +115,21 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
       <div className="flex gap-2 mt-auto">
         <button
-          onClick={onAddToCart}
+          onClick={handleAddToCart}
           className={`py-2 px-4 flex-1 ${
-            isAddedToCart
+            inCart
               ? "bg-white text-green-600 border border-gray-300"
               : "bg-[#313237] text-white hover:bg-opacity-90"
           } transition`}
         >
-          {isAddedToCart ? "Added to cart" : "Add to cart"}
+          {inCart ? "Added to cart" : "Add to cart"}
         </button>
         <button
           onClick={handleToggleFavorite}
           className="border border-gray-300 p-2 flex items-center justify-center"
-          aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+          aria-label={favorited ? "Remove from favorites" : "Add to favorites"}
         >
-          <Icon id={isFavorite ? "heart-active" : "heart"} size={16} />
+          <Icon id={favorited ? "heart-active" : "heart"} size={16} />
         </button>
       </div>
     </div>

@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Icon } from "@ui/Icon";
 import { NavLink } from "react-router-dom";
 import { MobileMenu } from "@shared/ui/MobileMenu";
+import { FavoritesBadge } from "@shared/ui/FavoritesBadge";
+import { CartBadge } from "@shared/ui/CartBadge";
 
 const getLinkClassName = ({ isActive }: { isActive: boolean }) => {
   return `font-mont text-[12px] leading-[11px] tracking-[0.04em] font-[800] uppercase transition-colors ${
@@ -49,18 +51,12 @@ export const Header: React.FC = () => {
           >
             <Icon id="burger" className="w-4 h-4" />
           </button>
-          <button
-            className="hidden sm:flex w-[48px] xl:w-[64px] items-center justify-center text-primary hover:text-secondary transition-colors border-l border-elements"
-            aria-label="Favorites"
-          >
-            <Icon id="heart" className="w-4 h-4" />
-          </button>
-          <button
-            className="hidden sm:flex w-[48px] xl:w-[64px] items-center justify-center text-primary hover:text-secondary transition-colors border-l border-elements"
-            aria-label="Cart"
-          >
-            <Icon id="cart" className="w-4 h-4" />
-          </button>
+          <div className="hidden sm:flex w-[48px] xl:w-[64px] items-center justify-center text-primary hover:text-secondary transition-colors border-l border-elements">
+            <FavoritesBadge />
+          </div>
+          <div className="hidden sm:flex w-[48px] xl:w-[64px] items-center justify-center text-primary hover:text-secondary transition-colors border-l border-elements">
+            <CartBadge />
+          </div>
         </div>
       </div>
 

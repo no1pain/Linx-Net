@@ -15,6 +15,7 @@ export const PhoneGrid: React.FC<PhoneGridProps> = ({ phones }) => {
           className="px-2 mb-6 w-full sm:w-1/2 md:w-1/3 lg:w-1/4"
         >
           <ProductCard
+            id={phone.id.toString()}
             title={phone.title}
             subtitle={phone.subtitle}
             price={phone.price}
@@ -25,7 +26,6 @@ export const PhoneGrid: React.FC<PhoneGridProps> = ({ phones }) => {
             onAddToFavorites={() =>
               console.log(`Add to favorites: ${phone.title}`)
             }
-            initialFavorite={false}
           />
         </div>
       ))}

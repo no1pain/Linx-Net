@@ -57,6 +57,7 @@ export const NewModels: React.FC = () => {
                 {phones.map((phone) => (
                   <div key={phone.id} className="flex-shrink-0 w-[272px]">
                     <ProductCard
+                      id={phone.id.toString()}
                       title={phone.title}
                       subtitle={
                         phone.model ? `(${phone.model})` : phone.subtitle

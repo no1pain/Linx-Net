@@ -153,6 +153,7 @@ export const AccessoriesPage: React.FC = () => {
             {currentAccessories.map((accessory) => (
               <div key={accessory.id}>
                 <ProductCard
+                  id={accessory.id.toString()}
                   title={accessory.title}
                   subtitle={`${accessory.brand} | ${accessory.category}`}
                   price={accessory.price}
