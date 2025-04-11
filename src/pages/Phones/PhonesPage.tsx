@@ -1,9 +1,9 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { Typography } from "@ui/Typography";
-import { SortingDropdown } from "./components/SortingDropdown";
-import { ItemsPerPageDropdown } from "./components/ItemsPerPageDropdown";
+import { SortingDropdown } from "@ui/SortingDropdown";
+import { ItemsPerPageDropdown } from "@ui/ItemsPerPageDropdown";
+import { Pagination } from "@ui/Pagination";
 import { PhoneGrid } from "./components/PhoneGrid";
-import { Pagination } from "./components/Pagination";
 import { SortOption, Phone } from "./types";
 import { fetchPhones } from "./utils/phoneData";
 import { Link } from "react-router-dom";
@@ -59,8 +59,8 @@ export const PhonesPage: React.FC = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleSortChange = (option: SortOption) => {
-    setSortBy(option);
+  const handleSortChange = (option: string) => {
+    setSortBy(option as SortOption);
     setCurrentPage(1);
   };
 
@@ -92,7 +92,7 @@ export const PhonesPage: React.FC = () => {
         <div className="text-center py-8">Loading phones...</div>
       ) : (
         <>
-          <div className="flex justify-between items-end mb-8">
+          <div className="flex flex-wrap gap-4 items-end mb-8">
             <SortingDropdown value={sortBy} onChange={handleSortChange} />
             <ItemsPerPageDropdown
               value={itemsPerPage}

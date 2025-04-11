@@ -35,7 +35,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     onAddToFavorites();
   };
 
-  // Format the image path properly
   const getImagePath = (imagePath: string) => {
     if (imagePath.startsWith("http")) return imagePath;
     return `/${imagePath}`;
