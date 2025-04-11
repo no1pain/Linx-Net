@@ -31,7 +31,7 @@ export const ProductImages: React.FC<ProductImagesProps> = ({
             >
               <img
                 src={getImagePath(image)}
-                alt={`${productName} - Image ${index + 1}`}
+                alt={`Product thumbnail ${index + 1}`}
                 className="h-full w-full object-contain"
               />
             </button>
