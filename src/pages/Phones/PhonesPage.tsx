@@ -6,6 +6,7 @@ import { PhoneGrid } from "./components/PhoneGrid";
 import { Pagination } from "./components/Pagination";
 import { SortOption } from "./types";
 import { allPhones } from "./utils/phoneData";
+import { Link } from "react-router-dom";
 
 export const PhonesPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -51,7 +52,9 @@ export const PhonesPage: React.FC = () => {
   return (
     <div className="container mx-auto px-4 py-6">
       <div className="flex items-center text-xs text-gray-500 mb-6">
-        <span>Home</span>
+        <Link to="/" className="hover:text-primary transition-colors">
+          Home
+        </Link>
         <span className="mx-1">›</span>
         <span className="text-black">Mobile phones</span>
       </div>
