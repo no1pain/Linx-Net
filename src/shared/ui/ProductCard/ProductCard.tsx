@@ -35,10 +35,20 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     onAddToFavorites();
   };
 
+  // Format the image path properly
+  const getImagePath = (imagePath: string) => {
+    if (imagePath.startsWith("http")) return imagePath;
+    return `/${imagePath}`;
+  };
+
   return (
     <div className="border border-gray-200 p-6 flex flex-col h-full">
       <div className="flex justify-center mb-6 h-[200px]">
-        <img src={image} alt={title} className="h-full object-contain" />
+        <img
+          src={getImagePath(image)}
+          alt={title}
+          className="h-full object-contain"
+        />
       </div>
 
       <div className="min-h-[60px] mb-2">
@@ -48,7 +58,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
       <div className="flex items-end gap-2 mb-2">
         <p className="text-xl font-semibold">${price}</p>
-        {oldPrice && (
+        {oldPrice && oldPrice > price && (
           <p className="text-sm text-gray-500 line-through">${oldPrice}</p>
         )}
       </div>

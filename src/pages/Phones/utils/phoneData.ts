@@ -1,64 +1,45 @@
-import iphonesData from "@shared/data/iphones.json";
 import { Phone } from "../types";
 
-export const generateMorePhones = (): Phone[] => {
-  const originalCount = iphonesData.length;
-  const targetCount = 70;
-
-  const extraNeeded = targetCount - originalCount;
-
-  const repeatTimes = Math.ceil(extraNeeded / originalCount);
-
-  const extraPhones: Phone[] = [];
-  const colorVariants = [
-    "Black",
-    "White",
-    "Gold",
-    "Silver",
-    "Purple",
-    "Red",
-    "Blue",
-    "Green",
-  ];
-  const storageVariants = [32, 64, 128, 256, 512];
-
-  let count = 0;
-  for (let i = 0; i < repeatTimes && count < extraNeeded; i++) {
-    for (let j = 0; j < iphonesData.length && count < extraNeeded; j++) {
-      const phone = iphonesData[j];
-      const color =
-        colorVariants[Math.floor(Math.random() * colorVariants.length)];
-      const storage =
-        storageVariants[Math.floor(Math.random() * storageVariants.length)];
-      const priceAdjustment = Math.floor(Math.random() * 200) - 100;
-
-      const newTitle = phone.title
-        .replace(/\d+GB/, `${storage}GB`)
-        .replace(/Silver|Gold|Black|Red/, color);
-
-      const newSubtitle = phone.subtitle
-        ? phone.subtitle
-            .replace(/\d+GB/, `${storage}GB`)
-            .replace(/Silver|Gold|Black|Red/, color)
-        : "";
-
-      extraPhones.push({
-        ...phone,
-        id: `${phone.id}-${i}-${j}`,
-        title: newTitle,
-        subtitle: newSubtitle,
-        price: Math.max(499, phone.price + priceAdjustment),
-        specs: {
-          ...phone.specs,
-          Capacity: `${storage} GB`,
-        },
-      });
-
-      count++;
+export const fetchPhones = async (): Promise<Phone[]> => {
+  try {
+    const response = await fetch("/api/phones.json");
+    if (!response.ok) {
+      throw new Error("Failed to fetch phones data");
     }
-  }
 
-  return [...iphonesData, ...extraPhones];
+    const phonesData = await response.json();
+
+    // Map the API data format to our application's Phone type
+    return phonesData.map((phone: any) => ({
+      id: phone.id,
+      title: phone.name,
+      subtitle: `${phone.capacity} | ${phone.color}`,
+      price: phone.priceDiscount,
+      oldPrice: phone.priceRegular,
+      image: phone.images[0], // Use the first image as the main image
+      specs: {
+        Screen: phone.screen,
+        Capacity: phone.capacity,
+        RAM: phone.ram,
+      },
+      // Additional properties for detail page if needed
+      color: phone.color,
+      category: phone.category,
+      capacityAvailable: phone.capacityAvailable,
+      colorsAvailable: phone.colorsAvailable,
+      images: phone.images,
+      description: phone.description,
+      processor: phone.processor,
+      resolution: phone.resolution,
+      camera: phone.camera,
+      zoom: phone.zoom,
+      cell: phone.cell,
+    }));
+  } catch (error) {
+    console.error("Error fetching phones:", error);
+    return [];
+  }
 };
 
-export const allPhones = generateMorePhones();
+// For backward compatibility, provide an empty array until the data is loaded
+export const allPhones: Phone[] = [];

@@ -1,32 +1,52 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Typography } from "@ui/Typography";
 import { SortingDropdown } from "./components/SortingDropdown";
 import { ItemsPerPageDropdown } from "./components/ItemsPerPageDropdown";
 import { PhoneGrid } from "./components/PhoneGrid";
 import { Pagination } from "./components/Pagination";
-import { SortOption } from "./types";
-import { allPhones } from "./utils/phoneData";
+import { SortOption, Phone } from "./types";
+import { fetchPhones } from "./utils/phoneData";
 import { Link } from "react-router-dom";
 
 export const PhonesPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(16);
   const [sortBy, setSortBy] = useState<SortOption>("Newest");
+  const [phones, setPhones] = useState<Phone[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadPhones = async () => {
+      try {
+        setLoading(true);
+        const phonesData = await fetchPhones();
+        setPhones(phonesData);
+      } catch (error) {
+        console.error("Error loading phones:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadPhones();
+  }, []);
 
   const sortedPhones = useMemo(() => {
-    const phones = [...allPhones];
+    if (!phones.length) return [];
+
+    const phonesToSort = [...phones];
 
     switch (sortBy) {
       case "Newest":
-        return [...phones].sort(() => Math.random() - 0.5);
+        return phonesToSort; // Keep original order for newest
       case "Alphabetically":
-        return [...phones].sort((a, b) => a.title.localeCompare(b.title));
+        return [...phonesToSort].sort((a, b) => a.title.localeCompare(b.title));
       case "Cheapest":
-        return [...phones].sort((a, b) => a.price - b.price);
+        return [...phonesToSort].sort((a, b) => a.price - b.price);
       default:
-        return phones;
+        return phonesToSort;
     }
-  }, [sortBy]);
+  }, [sortBy, phones]);
 
   const totalPages = Math.ceil(sortedPhones.length / itemsPerPage);
 
@@ -63,24 +83,32 @@ export const PhonesPage: React.FC = () => {
         <Typography variant="h1" as="h1" className="mb-1">
           Mobile phones
         </Typography>
-        <p className="text-sm text-gray-500">{sortedPhones.length} models</p>
+        <p className="text-sm text-gray-500">
+          {loading ? "Loading..." : `${sortedPhones.length} models`}
+        </p>
       </div>
 
-      <div className="flex justify-between items-end mb-8">
-        <SortingDropdown value={sortBy} onChange={handleSortChange} />
-        <ItemsPerPageDropdown
-          value={itemsPerPage}
-          onChange={handleItemsPerPageChange}
-        />
-      </div>
+      {loading ? (
+        <div className="text-center py-8">Loading phones...</div>
+      ) : (
+        <>
+          <div className="flex justify-between items-end mb-8">
+            <SortingDropdown value={sortBy} onChange={handleSortChange} />
+            <ItemsPerPageDropdown
+              value={itemsPerPage}
+              onChange={handleItemsPerPageChange}
+            />
+          </div>
 
-      <PhoneGrid phones={currentPhones} />
+          <PhoneGrid phones={currentPhones} />
 
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
-      />
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        </>
+      )}
     </div>
   );
 };
