@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect, MutableRefObject } from "react";
-import { useResponsive } from "./useResponsive";
 
 interface CarouselOptions {
   itemCount: number;
