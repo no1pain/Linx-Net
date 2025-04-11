@@ -1,10 +1,5 @@
-import React, {
-  createContext,
-  useState,
-  useContext,
-  useEffect,
-  ReactNode,
-} from "react";
+import React, { createContext, useContext, ReactNode } from "react";
+import { useLocalStorage } from "../hooks";
 
 export interface CartItem {
   id: string;
@@ -31,27 +26,15 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
+const STORAGE_KEY = "linx-net-cart";
+
 export const CartProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
-
-  // Load cart from localStorage on mount
-  useEffect(() => {
-    const storedCart = localStorage.getItem("cart");
-    if (storedCart) {
-      try {
-        setCartItems(JSON.parse(storedCart));
-      } catch (error) {
-        console.error("Failed to parse cart from localStorage", error);
-      }
-    }
-  }, []);
-
-  // Save cart to localStorage when it changes
-  useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cartItems));
-  }, [cartItems]);
+  const [cartItems, setCartItems] = useLocalStorage<CartItem[]>(
+    STORAGE_KEY,
+    []
+  );
 
   const addToCart = (item: Omit<CartItem, "quantity">) => {
     const itemId = String(item.id);

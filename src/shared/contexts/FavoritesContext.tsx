@@ -1,10 +1,5 @@
-import React, {
-  createContext,
-  useState,
-  useContext,
-  useEffect,
-  ReactNode,
-} from "react";
+import React, { createContext, useContext, ReactNode } from "react";
+import { useLocalStorage } from "../hooks";
 
 export interface FavoriteItem {
   id: string;
@@ -30,25 +25,15 @@ const FavoritesContext = createContext<FavoritesContextType | undefined>(
   undefined
 );
 
+const STORAGE_KEY = "linx-net-favorites";
+
 export const FavoritesProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [favorites, setFavorites] = useState<FavoriteItem[]>([]);
-
-  useEffect(() => {
-    const storedFavorites = localStorage.getItem("favorites");
-    if (storedFavorites) {
-      try {
-        setFavorites(JSON.parse(storedFavorites));
-      } catch (error) {
-        console.error("Failed to parse favorites from localStorage", error);
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("favorites", JSON.stringify(favorites));
-  }, [favorites]);
+  const [favorites, setFavorites] = useLocalStorage<FavoriteItem[]>(
+    STORAGE_KEY,
+    []
+  );
 
   const addToFavorites = (item: FavoriteItem) => {
     const itemId = String(item.id);
